@@ -1,0 +1,6 @@
+Build phase:
+  stages:
+    Build docker image:
+      type: docker_build
+    Push docker image:
+      type: docker_push
