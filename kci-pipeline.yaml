@@ -1,0 +1,13 @@
+Build phase:
+  stages:
+    Integration Tests:
+      type: tests
+      steps:
+        - sh ci/tests.sh "tools/e2e_test_runner.sh"
+    Build docker image:
+      type: docker_build
+      app_images:
+        - dockerfile: docker/lite/Dockerfile.mariadb103
+          app_name: vitess
+    Push docker image:
+      type: docker_push
