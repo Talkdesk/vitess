@@ -68,6 +68,8 @@ func (mysqld *Mysqld) GetSchema(dbName string, tables, excludeTables []string, i
 	if !includeViews {
 		sql += " AND table_type = '" + tmutils.TableBaseTable + "'"
 	}
+
+	sql += " ORDER BY table_name"
 	qr, err := mysqld.FetchSuperQuery(ctx, sql)
 	if err != nil {
 		return nil, err
