@@ -1,0 +1,31 @@
+FROM mariadb:10.3
+
+ENV DEBIAN_FRONTEND noninteractive
+WORKDIR /vt/src/vitess.io/vitess
+
+RUN apt-get update && \
+  apt-get install -y software-properties-common \
+    make unzip g++ curl git wget ant openjdk-8-jdk eatmydata curl maven zip etcd
+
+RUN curl -O https://dl.google.com/go/go1.15.6.linux-amd64.tar.gz && \
+  tar -C /usr/local -xzf go1.15.6.linux-amd64.tar.gz
+
+RUN mkdir -p dist bin
+RUN curl -L https://github.com/coreos/etcd/releases/download/v3.3.10/etcd-v3.3.10-linux-amd64.tar.gz | tar -zxC dist
+RUN mv dist/etcd-v3.3.10-linux-amd64/etcd bin/
+RUN mv dist/etcd-v3.3.10-linux-amd64/etcdctl bin/
+
+ENV PATH /go/bin:/usr/local/go/bin:$PATH
+
+COPY . /vt/src/vitess.io/vitess
+
+RUN go mod download
+RUN make tools
+RUN make build
+
+RUN groupadd -g 2000 vitess \ 
+  && useradd -m -u 2001 -g vitess vitess
+RUN chown -R vitess:vitess /vt
+RUN chown -R vitess:vitess /tmp
+
+USER vitess
