@@ -31,7 +31,7 @@ docker rm vt_orc_build
 
 echo "Building Docker image..."
 cp Dockerfile orchestrator.conf.json $tmpdir
-(cd $tmpdir && docker build -t vitess/orchestrator .)
+(cd $tmpdir && docker build -t vitess/orchestrator . && docker tag vitess/orchestrator localhost:5000/vitess-orchestrator:latest && docker push localhost:5000/vitess-orchestrator:latest)
 
 # Clean up
 rm -r $tmpdir
